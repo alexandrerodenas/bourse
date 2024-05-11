@@ -33,7 +33,7 @@ class Stock:
         return round(self.estimation - self.cost, 2)
 
     def calculate_difference_value_percentage(self):
-        return (self.difference_value_euros / self.cost) * 100 if self.cost != 0 else 0
+        return round((self.difference_value_euros / self.cost) * 100 if self.cost != 0 else 0, 2)
 
     def transform_to_dict(self):
         return {
