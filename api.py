@@ -1,16 +1,13 @@
 from flask import Flask, jsonify
 
 from portfolio import Portfolio
-from stock import load_stocks_from_yaml
 
 app = Flask(__name__)
 
 
 @app.route('/stocks', methods=['GET'])
 def get_portfolio():
-    portfolio = Portfolio(
-        load_stocks_from_yaml("stocks.yml")
-    )
+    portfolio = Portfolio.build_from_file("stocks.yml")
 
     return jsonify(portfolio.transform_to_dict())
 

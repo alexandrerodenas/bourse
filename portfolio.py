@@ -1,6 +1,7 @@
 from typing import List
 
 from stock import Stock
+from stock_metadata import StockMetadata
 
 
 class Portfolio:
@@ -30,3 +31,11 @@ class Portfolio:
         total_gain_deficit = self.total_gain_or_deficit()
 
         return f"Total Investment Amount: {total_investment}\nTotal Market Value: {total_market_value}\nTotal Gain or Deficit: {total_gain_deficit}\n"
+
+    @staticmethod
+    def build_from_file(filepath: str) -> 'Portfolio':
+        return Portfolio(
+            Stock.build_from_metadata(
+                StockMetadata.load_from_file(filepath)
+            )
+        )

@@ -1,15 +1,18 @@
-import yaml
+from typing import List
+
 import yfinance as yf
+
+from stock_metadata import StockMetadata
 
 
 class Stock:
-    def __init__(self, name, symbol, number, unit_cost, date, status):
-        self.name = name
-        self.number = number
-        self.date = date
-        self.status = status
-        self.yf_ticker = yf.Ticker(symbol)
-        self.cost = unit_cost * number
+    def __init__(self, metadata: StockMetadata):
+        self.name = metadata.name
+        self.number = metadata.number
+        self.date = metadata.date
+        self.status = metadata.status
+        self.yf_ticker = yf.Ticker(metadata.symbol)
+        self.cost = metadata.unit_cost * metadata.number
         self.current_price = self.get_current_price()
         self.gain_or_deficit = self.calculate_gain_or_deficit()
         self.estimation = self.calculate_stock_value_estimation()
@@ -54,23 +57,6 @@ class Stock:
     def to_string(self):
         return f"Name: {self.name}\nNumber of Shares: {self.number}\nCost: {self.cost}\nDate: {self.date}\nStatus: {self.status}\nCurrent Price: {self.current_price}\nGain or Deficit: {self.gain_or_deficit}\nStock Value Estimation: {self.estimation}\nDifference Value (Euros): {self.difference_value_euros}\nDifference Value (Percentage): {self.difference_value_percentage:.2f}%\n"
 
-
-def load_stocks_from_yaml(file_path):
-    stocks = []
-
-    # Load YAML data
-    with open(file_path, "r") as file:
-        data = yaml.safe_load(file)
-
-    for stock_name, stock_data in data.items():
-        stock = Stock(
-            name=stock_name,
-            symbol=stock_data["symbol"],
-            number=stock_data["number"],
-            unit_cost=stock_data["cost"],
-            date=stock_data["date"],
-            status=stock_data["status"]
-        )
-        stocks.append(stock)
-
-    return stocks
+    @staticmethod
+    def build_from_metadata(stock_metadata: List[StockMetadata]) -> List['Stock']:
+        return [Stock(metadata) for metadata in stock_metadata]
