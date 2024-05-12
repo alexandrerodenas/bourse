@@ -5,6 +5,7 @@ import {
 import { createTab } from './tabs.js';
 import { attachTabClickListeners, activePortfolio } from './listeners.js';
 import { populateAdditionalInfo } from './additionalInfo.js';
+import { drawPortfoliosEvolution } from './portfolio-chart.js';
 
 
 
@@ -18,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             activePortfolio(portfolios[0].id);
             attachTabClickListeners();
+            drawPortfoliosEvolution(portfolios);
         })
         .catch(error => console.error('Error fetching data:', error));
 });
