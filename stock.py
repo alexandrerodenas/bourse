@@ -1,29 +1,20 @@
 from typing import List
-
-import yfinance as yf
-
 from stock_metadata import StockMetadata
+from yfinance_utils import get_current_price
 
 
 class Stock:
-    def __init__(self, metadata: StockMetadata):
+    def __init__(self, metadata: StockMetadata, current_price: int):
         self.name = metadata.name
         self.number = metadata.number
         self.date = metadata.date
         self.status = metadata.status
-        self.yf_ticker = yf.Ticker(metadata.symbol)
         self.cost = metadata.unit_cost * metadata.number
-        self.current_price = self.get_current_price()
+        self.current_price = current_price
         self.gain_or_deficit = self.calculate_gain_or_deficit()
         self.estimation = self.calculate_stock_value_estimation()
         self.difference_value_euros = self.calculate_difference_value_euros()
         self.difference_value_percentage = self.calculate_difference_value_percentage()
-
-    def get_current_price(self):
-        return round(self.yf_ticker.history(period="1d")["Close"].iloc[-1], 3)
-
-    def get_close_history(self):
-        return self.yf_ticker.history(start=self.date)["Close"].values
 
     def calculate_gain_or_deficit(self):
         if self.status == "pending":
@@ -58,5 +49,8 @@ class Stock:
         return f"Name: {self.name}\nNumber of Shares: {self.number}\nCost: {self.cost}\nDate: {self.date}\nStatus: {self.status}\nCurrent Price: {self.current_price}\nGain or Deficit: {self.gain_or_deficit}\nStock Value Estimation: {self.estimation}\nDifference Value (Euros): {self.difference_value_euros}\nDifference Value (Percentage): {self.difference_value_percentage:.2f}%\n"
 
     @staticmethod
-    def build_from_metadata(stock_metadata: List[StockMetadata]) -> List['Stock']:
-        return [Stock(metadata) for metadata in stock_metadata]
+    def build_stock_with_up_to_date_price(stock_metadata: List[StockMetadata]) -> List['Stock']:
+        return [
+            Stock(metadata, get_current_price(metadata.symbol))
+            for metadata in stock_metadata
+        ]
