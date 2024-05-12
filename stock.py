@@ -5,10 +5,10 @@ import yfinance as yf
 class Stock:
     def __init__(self, name, symbol, number, unit_cost, date, status):
         self.name = name
-        self.symbol = symbol
         self.number = number
         self.date = date
         self.status = status
+        self.yf_ticker = yf.Ticker(symbol)
         self.cost = unit_cost * number
         self.current_price = self.get_current_price()
         self.gain_or_deficit = self.calculate_gain_or_deficit()
@@ -17,8 +17,10 @@ class Stock:
         self.difference_value_percentage = self.calculate_difference_value_percentage()
 
     def get_current_price(self):
-        stock = yf.Ticker(self.symbol)
-        return round(stock.history(period="1d")["Close"].iloc[-1], 3)
+        return round(self.yf_ticker.history(period="1d")["Close"].iloc[-1], 3)
+
+    def get_close_history(self):
+        return self.yf_ticker.history(start=self.date)["Close"].values
 
     def calculate_gain_or_deficit(self):
         if self.status == "pending":
@@ -38,7 +40,6 @@ class Stock:
     def transform_to_dict(self):
         return {
             'name': self.name,
-            'symbol': self.symbol,
             'number': self.number,
             'cost': self.cost,
             'date': self.date,
@@ -51,7 +52,7 @@ class Stock:
         }
 
     def to_string(self):
-        return f"Name: {self.name}\nSymbol: {self.symbol}\nNumber of Shares: {self.number}\nCost: {self.cost}\nDate: {self.date}\nStatus: {self.status}\nCurrent Price: {self.current_price}\nGain or Deficit: {self.gain_or_deficit}\nStock Value Estimation: {self.estimation}\nDifference Value (Euros): {self.difference_value_euros}\nDifference Value (Percentage): {self.difference_value_percentage:.2f}%\n"
+        return f"Name: {self.name}\nNumber of Shares: {self.number}\nCost: {self.cost}\nDate: {self.date}\nStatus: {self.status}\nCurrent Price: {self.current_price}\nGain or Deficit: {self.gain_or_deficit}\nStock Value Estimation: {self.estimation}\nDifference Value (Euros): {self.difference_value_euros}\nDifference Value (Percentage): {self.difference_value_percentage:.2f}%\n"
 
 
 def load_stocks_from_yaml(file_path):

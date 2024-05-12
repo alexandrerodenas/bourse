@@ -1,96 +1,93 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter import messagebox
-from typing import List
-import pandas as pd
+
 from portfolio import Portfolio
-from stock import load_stocks_from_yaml, Stock
+from stock import load_stocks_from_yaml
 
 
-def create_stock_datatable(stocks: List[Stock]):
-    def populate_treeview():
-        for stock in stocks:
-            # Color rows with negative difference in red
-            if stock.difference_value_euros < 0:
-                tree.insert('', 'end', values=(
-                    stock.name,
-                    stock.date,
-                    stock.cost,
-                    stock.current_price,
-                    stock.difference_value_euros,
-                    stock.difference_value_percentage,
-                    stock.gain_or_deficit,
-                    stock.number,
-                    stock.status,
-                    stock.estimation
-                ), tags=('red_row',))
-            else:
-                tree.insert('', 'end', values=(
-                    stock.name,
-                    stock.date,
-                    stock.cost,
-                    stock.current_price,
-                    stock.difference_value_euros,
-                    stock.difference_value_percentage,
-                    stock.gain_or_deficit,
-                    stock.number,
-                    stock.status,
-                    stock.estimation
-                ))
+def populate_treeview(tree, portfolio):
+    rows = []
 
-    def create_columns():
-        tree.heading('Name', text='Name', command=lambda: sort_column('Name'))
-        tree.heading('Date', text='Date', command=lambda: sort_column('Date'))
-        tree.heading('Cost', text='Cost', command=lambda: sort_column('Cost'))
-        tree.heading('Current Price', text='Current Price', command=lambda: sort_column('Current Price'))
-        tree.heading('Difference (€)', text='Difference (€)', command=lambda: sort_column('Difference (€)'))
-        tree.heading('Difference (%)', text='Difference (%)', command=lambda: sort_column('Difference (%)'))
-        tree.heading('Gain/Deficit', text='Gain/Deficit', command=lambda: sort_column('Gain/Deficit'))
-        tree.heading('Number', text='Number', command=lambda: sort_column('Number'))
-        tree.heading('Status', text='Status', command=lambda: sort_column('Status'))
-        tree.heading('Estimation', text='Estimation', command=lambda: sort_column('Estimation'))
+    for stock in portfolio.stocks:
+        row_values = [
+            stock.name.capitalize(),
+            stock.date,
+            stock.cost,
+            stock.current_price,
+            stock.difference_value_euros,
+            stock.difference_value_percentage,
+            stock.number,
+            stock.status,
+            stock.estimation
+        ]
+        rows.append(row_values)
 
-        tree.column('Name', width=100)
-        tree.column('Date', width=80)
-        tree.column('Cost', width=80)
-        tree.column('Current Price', width=100)
-        tree.column('Difference (€)', width=120)
-        tree.column('Difference (%)', width=120)
-        tree.column('Gain/Deficit', width=100)
-        tree.column('Number', width=80)
-        tree.column('Status', width=80)
-        tree.column('Estimation', width=120)
+    rows.sort(key=lambda x: x[0])
 
-    def sort_column(col):
-        data = [(tree.set(child, col), child) for child in tree.get_children('')]
-        data.sort(reverse=reverse_sort[col])
-        for index, item in enumerate(data):
-            tree.move(item[1], '', index)
-        reverse_sort[col] = not reverse_sort[col]
+    for row in rows:
+        if row[4] < 0:  # Color rows with negative difference in red
+            tree.insert('', 'end', values=row, tags=('red_row',))
+        else:
+            tree.insert('', 'end', values=row)
 
+
+def create_columns(tree, reverse_sort):
+    columns = [
+        ('Name', 'Name'),
+        ('Date', 'Date'),
+        ('Cost', 'Cost'),
+        ('Current Price', 'Current Price'),
+        ('Difference (€)', 'Difference (€)'),
+        ('Difference (%)', 'Difference (%)'),
+        ('Number', 'Number'),
+        ('Status', 'Status'),
+        ('Estimation', 'Estimation')
+    ]
+
+    for col_id, col_name in columns:
+        tree.heading(col_id, text=col_name, command=lambda col=col_id: sort_column(tree, col, reverse_sort))
+        tree.column(col_id, width=80 if col_id == 'Date' else 120)
+
+
+def sort_column(tree, col, reverse_sort):
+    data = [(tree.set(child, col), child) for child in tree.get_children('')]
+    data.sort(reverse=reverse_sort[col])
+    for index, (val, child) in enumerate(data):
+        tree.move(child, '', index)
+    reverse_sort[col] = not reverse_sort[col]
+
+
+def create_stock_datatable(portfolio: Portfolio):
     root = tk.Tk()
     root.title("Stocks Data Table")
 
     tree = ttk.Treeview(root, columns=(
         'Name', 'Date', 'Cost', 'Current Price',
-        'Difference (€)', 'Difference (%)', 'Gain/Deficit',
-        'Number', 'Status', 'Estimation'
+        'Difference (€)', 'Difference (%)', 'Number', 'Status', 'Estimation'
     ))
 
     reverse_sort = {col: False for col in ('Name', 'Date', 'Cost', 'Current Price',
-                                           'Difference (€)', 'Difference (%)', 'Gain/Deficit',
-                                           'Number', 'Status', 'Estimation')}
+                                           'Difference (€)', 'Difference (%)', 'Number', 'Status', 'Estimation')}
 
-    create_columns()
+    create_columns(tree, reverse_sort)
 
-    # Add tag configuration for red rows
     tree.tag_configure('red_row', background='red')
+    tree.tag_configure('total_row', font=('TkDefaultFont', 10, 'bold'))
 
-    populate_treeview()
-    tree.pack(expand=True, fill='both')
+    additional_info_label = tk.Label(root, text='')
+    additional_info_label.pack()
+    additional_info_label.config(text=f'''
+        Investment: {portfolio.total_investment_amount():.2f}
+        Total market value: {portfolio.total_market_value():.2f}
+        Gain/Deficit: {portfolio.total_gain_or_deficit():.2f}
+        ''')
+
+    populate_treeview(tree, portfolio)
+    tree.pack(expand=False)
+    tree["show"] = "headings"
 
     root.mainloop()
 
 
 portfolio = Portfolio(load_stocks_from_yaml("stocks.yml"))
-create_stock_datatable(portfolio.stocks)
+create_stock_datatable(portfolio)
