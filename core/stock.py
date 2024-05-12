@@ -1,6 +1,6 @@
 from typing import List
-from stock_metadata import StockMetadata
-from yfinance_utils import get_current_price
+from core.stock_metadata import StockMetadata
+from core.yfinance_utils import get_current_price
 
 
 class Stock:

@@ -1,8 +1,8 @@
 import datetime
 from typing import List
 
-from stock import Stock
-from stock_metadata import StockMetadata
+from core.stock import Stock
+from core.stock_metadata import StockMetadata
 
 
 class Portfolio:

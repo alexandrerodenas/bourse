@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-from portfolio import Portfolio
+from core.portfolio import Portfolio
 
 
 def populate_treeview(tree, portfolio):
@@ -88,5 +88,5 @@ def create_stock_datatable(portfolio: Portfolio):
     root.mainloop()
 
 
-portfolio = Portfolio.build_from_file("stocks.yml")
+portfolio = Portfolio.build_from_file("../stocks.yml")
 create_stock_datatable(portfolio)

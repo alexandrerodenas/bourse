@@ -2,10 +2,10 @@ from typing import List
 
 import pandas as pd
 
-from portfolio import Portfolio
-from stock import Stock
-from stock_metadata import StockMetadata
-from yfinance_utils import get_close_history
+from core.portfolio import Portfolio
+from core.stock import Stock
+from core.stock_metadata import StockMetadata
+from core.yfinance_utils import get_close_history
 
 
 class History:
@@ -21,4 +21,10 @@ class History:
         self.portfolios = [
             Portfolio(stocks)
             for stocks in stocks_history
+        ]
+
+    def transform_to_dict(self):
+        return [
+            portfolio.transform_to_dict()
+            for portfolio in self.portfolios
         ]
