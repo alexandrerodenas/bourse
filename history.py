@@ -8,11 +8,6 @@ from stock_metadata import StockMetadata
 from yfinance_utils import get_close_history
 
 
-class StockNoFound(Exception):
-    def __init__(self, name: str):
-        super().__init__(f"Stock not found for name {name}.")
-
-
 class History:
     def __init__(self, stocks_metadata: List[StockMetadata]):
         stocks_history = pd.DataFrame([
@@ -27,7 +22,3 @@ class History:
             Portfolio(stocks)
             for stocks in stocks_history
         ]
-
-
-if __name__ == '__main__':
-    metadata = StockMetadata.load_from_file("stocks.yml")
