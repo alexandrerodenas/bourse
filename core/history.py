@@ -29,3 +29,9 @@ class History:
             portfolio.transform_to_dict()
             for portfolio in self.portfolios
         ]
+
+    @classmethod
+    def build_from_file(cls, filepath: str) -> 'History':
+        return History(
+            StockMetadata.load_from_file(filepath)
+        )
