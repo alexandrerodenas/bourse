@@ -30,6 +30,9 @@ class History:
             for portfolio in self.portfolios
         ]
 
+    def get_current_portfolio(self):
+        return self.portfolios[-1]
+
     @classmethod
     def build_from_file(cls, filepath: str) -> 'History':
         return History(

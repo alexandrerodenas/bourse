@@ -1,0 +1,15 @@
+services:
+  back:
+    container_name: bourse_backend
+    build:
+      context: .
+      dockerfile: back.Dockerfile
+    environment:
+      - STOCK_FILE=stocks.yml
+    volumes:
+      - type: bind
+        source: ./stocks.yml
+        target: /app/stocks.yml
+        read_only: true
+    ports:
+      - "8000:8000"

@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 from typing import List
 
@@ -19,6 +20,7 @@ class StockMetadata:
         with open(filepath, "r") as file:
             data = yaml.safe_load(file)
 
+        logging.info(f"Loading {len(data.items())} stocks.")
         return [
             StockMetadata(
                 name=stock_name,

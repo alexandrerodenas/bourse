@@ -1,29 +1,27 @@
-from flask import Flask, jsonify
+import logging
+import os
 
-from core.history import History
-from core.portfolio import Portfolio
+from flask import Flask, jsonify
 from flask_cors import CORS
 
-STOCKS_YML = "../stocks.yml"
+from core.history import History
 
 app = Flask(__name__)
 CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
 
 
 @app.route('/portfolio', methods=['GET'])
 def get_current_portfolio():
-    portfolio = Portfolio.build_from_file(STOCKS_YML)
-
-    return jsonify(portfolio.transform_to_dict())
+    return jsonify(history.get_current_portfolio().transform_to_dict())
 
 
 @app.route('/history', methods=['GET'])
 def get_portfolio_history():
-    history = History.build_from_file(STOCKS_YML)
-
     return jsonify(history.transform_to_dict())
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.config['CORS_HEADERS'] = 'Content-Type'
+    logging.basicConfig(level="INFO", format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+    history = History.build_from_file(os.getenv("STOCK_FILE"))
+    app.run(host='0.0.0.0', port=8000)
