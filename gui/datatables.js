@@ -1,8 +1,4 @@
-const DATE_FORMAT_OPTIONS = {
-  day: '2-digit',
-  month: '2-digit',
-  year: 'numeric'
-};
+
 const TABLE_OPTIONS = [
   { data: 'name', title: 'Nom' },
   { data: 'number', title: 'Nombre' },
@@ -18,35 +14,19 @@ const LENGTH_MENU_OPTIONS = [
 const DEFAULT_PAGE_LENGTH = 10;
 const RED_COLOR = '#DC143C';
 
-export function createTabAndDataTable(entry, _) {
-  const formattedDate = formatDate(entry.portfolio_date);
-  createTab(formattedDate);
-  const tabPane = createTabPane(formattedDate);
-  populateDataTable(tabPane.id, entry.stocks);
+export function createDataTable(portfolio) {
+  const tabPane = createTabPane(portfolio.id);
+  populateDataTable(tabPane.id, portfolio.stocks);
   createInfoSeparator(tabPane.id);
-  populateAdditionalInfo(entry, tabPane.id);
+  populateAdditionalInfo(portfolio, tabPane.id);
 }
 
-
-
-function formatDate(dateString) {
-  return new Date(dateString).toLocaleDateString('fr-FR', DATE_FORMAT_OPTIONS)
-  .replace(/\//g, '-');
-}
-
-function createTab(formattedDate) {
-  var tab = document.createElement('li');
-  tab.innerHTML = `<a href="#tab${formattedDate}">${formattedDate}</a>`;
-  document.querySelector('#apiTabs ul').appendChild(tab);
-  return tab;
-}
-
-function createTabPane(formattedDate) {
-  var tabContent = document.getElementById('tabContent');
-  var tabPane = document.createElement('div');
+function createTabPane(portfolioId) {
+  const tabContent = document.getElementById('tabContent');
+  const tabPane = document.createElement('div');
   tabPane.classList.add('tab-pane');
   tabPane.style.display = 'none';
-  tabPane.id = `tab${formattedDate}`;
+  tabPane.id = portfolioId;
   tabContent.appendChild(tabPane);
   return tabPane;
 }
@@ -58,7 +38,7 @@ function populateDataTable(tabPaneId, stocks) {
 
   const table = document.createElement('table');
   table.classList.add('table', 'is-bordered', 'is-striped', 'is-narrow', 'is-hoverable', 'is-fullwidth');
-  table.id = `table${tabPaneId.substr(3)}`;
+  table.id = `table-${tabPaneId.substr(3)}`;
   tableContainer.appendChild(table);
   new DataTable(table, {
     data: stocks,
@@ -99,24 +79,6 @@ export function activateFirstTab() {
   firstTabLink.click()
 }
 
-export function attachTabClickListeners() {
-  const tabLinks = document.querySelectorAll('#apiTabs ul li a');
-  tabLinks.forEach(function(tabLink) {
-    tabLink.addEventListener('click', function(event) {
-      const targetId = this.getAttribute('href').substring(1);
-      const targetPane = document.getElementById(targetId);
-      document.querySelectorAll('.tab-pane').forEach(function(tabPane) {
-        tabPane.classList.remove('is-active');
-        tabPane.style.display = 'none';
-      });
-      document.querySelectorAll('#apiTabs ul li').forEach(function(tab) {
-        tab.classList.remove('is-active');
-      });
-      targetPane.classList.add('is-active');
-      targetPane.style.display = 'block'
-    });
-  });
-}
 
 function createInfoSeparator(tabPaneId) {
   const separator = document.createElement('hr');

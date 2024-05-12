@@ -1,5 +1,6 @@
 import datetime
 from typing import List
+from uuid import uuid4
 
 from core.stock import Stock
 from core.stock_metadata import StockMetadata
@@ -9,6 +10,7 @@ class Portfolio:
     def __init__(self, stocks: List[Stock], portfolio_date=datetime.datetime.now()):
         self.stocks = stocks
         self.date = portfolio_date
+        self.id = uuid4()
 
     def total_investment_amount(self):
         return sum(stock.cost for stock in self.stocks)
@@ -25,6 +27,7 @@ class Portfolio:
             'total_market_value': self.total_market_value(),
             'total_gain_deficit': self.total_gain_or_deficit(),
             'portfolio_date': self.date,
+            'id': self.id,
             'stocks': [stock.transform_to_dict() for stock in self.stocks]
         }
 

@@ -1,16 +1,20 @@
-import { fetchData } from './api.js';
+import { fetchPortfolios } from './api.js';
 import {
     activateFirstTab,
-    attachTabClickListeners,
-    createTabAndDataTable,
+    createDataTable,
 } from './datatables.js';
+import { createTab } from './tabs.js';
+import { attachTabClickListeners } from './listeners.js';
 
 
 
 document.addEventListener('DOMContentLoaded', function () {
-    fetchData()
-        .then(data => {
-            data.forEach(createTabAndDataTable);
+    fetchPortfolios()
+        .then(portfolios => {
+            portfolios.forEach(portfolio => {
+                createTab(portfolio)
+                createDataTable(portfolio)
+            });
             activateFirstTab();
             attachTabClickListeners();
         })
