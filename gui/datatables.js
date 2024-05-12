@@ -18,7 +18,6 @@ export function createDataTable(portfolio) {
   const tabPane = createTabPane(portfolio.id);
   populateDataTable(tabPane.id, portfolio.stocks);
   createInfoSeparator(tabPane.id);
-  populateAdditionalInfo(portfolio, tabPane.id);
 }
 
 function createTabPane(portfolioId) {
@@ -79,25 +78,8 @@ export function activateFirstTab() {
   firstTabLink.click()
 }
 
-
 function createInfoSeparator(tabPaneId) {
   const separator = document.createElement('hr');
   separator.classList.add('info-separator');
   document.getElementById(tabPaneId).appendChild(separator);
-}
-
-function populateAdditionalInfo(entry, tabPaneId) {
-  const infoContainer = document.createElement('div');
-  infoContainer.classList.add('info-container');
-  const totalGainDeficit = parseFloat(entry.total_gain_deficit).toFixed(2);
-  const totalInvestmentAmount = parseFloat(entry.total_investment_amount).
-    toFixed(2);
-  const totalMarketValue = parseFloat(entry.total_market_value).toFixed(2);
-  infoContainer.innerHTML = `
-        <h3><i class="fas fa-info-circle"></i> Portfolio information</h3>
-        <p><i class="fas fa-money-bill"></i> Montant investit: ${totalInvestmentAmount}€</p>
-        <p><i class="fas fa-chart-pie"></i> Montant sur le marché: ${totalMarketValue}€</p>
-        <p><i class="fas fa-chart-line"></i> Total Gain/Perte: ${totalGainDeficit}</p>
-    `;
-  document.getElementById(tabPaneId).appendChild(infoContainer);
 }

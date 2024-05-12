@@ -5,6 +5,7 @@ import {
 } from './datatables.js';
 import { createTab } from './tabs.js';
 import { attachTabClickListeners } from './listeners.js';
+import { populateAdditionalInfo } from './additionalInfo.js';
 
 
 
@@ -14,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
             portfolios.forEach(portfolio => {
                 createTab(portfolio)
                 createDataTable(portfolio)
+                populateAdditionalInfo(portfolio);
             });
             activateFirstTab();
             attachTabClickListeners();
