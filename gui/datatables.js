@@ -73,11 +73,6 @@ function capitalizeString(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export function activateFirstTab() {
-  const firstTabLink = document.querySelector('#apiTabs ul li:first-child a');
-  firstTabLink.click()
-}
-
 function createInfoSeparator(tabPaneId) {
   const separator = document.createElement('hr');
   separator.classList.add('info-separator');

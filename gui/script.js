@@ -1,10 +1,9 @@
 import { fetchPortfolios } from './api.js';
 import {
-    activateFirstTab,
     createDataTable,
 } from './datatables.js';
 import { createTab } from './tabs.js';
-import { attachTabClickListeners } from './listeners.js';
+import { attachTabClickListeners, activePortfolio } from './listeners.js';
 import { populateAdditionalInfo } from './additionalInfo.js';
 
 
@@ -17,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 createDataTable(portfolio)
                 populateAdditionalInfo(portfolio);
             });
-            activateFirstTab();
+            activePortfolio(portfolios[0].id);
             attachTabClickListeners();
         })
         .catch(error => console.error('Error fetching data:', error));
