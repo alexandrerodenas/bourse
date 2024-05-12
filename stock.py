@@ -45,9 +45,6 @@ class Stock:
             'difference_value_percentage': self.difference_value_percentage
         }
 
-    def to_string(self):
-        return f"Name: {self.name}\nNumber of Shares: {self.number}\nCost: {self.cost}\nDate: {self.date}\nStatus: {self.status}\nCurrent Price: {self.current_price}\nGain or Deficit: {self.gain_or_deficit}\nStock Value Estimation: {self.estimation}\nDifference Value (Euros): {self.difference_value_euros}\nDifference Value (Percentage): {self.difference_value_percentage:.2f}%\n"
-
     @staticmethod
     def build_stock_with_up_to_date_price(stock_metadata: List[StockMetadata]) -> List['Stock']:
         return [

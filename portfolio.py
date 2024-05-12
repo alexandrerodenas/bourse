@@ -1,3 +1,4 @@
+import datetime
 from typing import List
 
 from stock import Stock
@@ -5,8 +6,9 @@ from stock_metadata import StockMetadata
 
 
 class Portfolio:
-    def __init__(self, stocks: List[Stock]):
+    def __init__(self, stocks: List[Stock], portfolio_date=datetime.datetime.now()):
         self.stocks = stocks
+        self.date = portfolio_date
 
     def total_investment_amount(self):
         return sum(stock.cost for stock in self.stocks)
@@ -22,15 +24,9 @@ class Portfolio:
             'total_investment_amount': self.total_investment_amount(),
             'total_market_value': self.total_market_value(),
             'total_gain_deficit': self.total_gain_or_deficit(),
+            'portfolio_date': self.date,
             'stocks': [stock.transform_to_dict() for stock in self.stocks]
         }
-
-    def to_string(self):
-        total_investment = self.total_investment_amount()
-        total_market_value = self.total_market_value()
-        total_gain_deficit = self.total_gain_or_deficit()
-
-        return f"Total Investment Amount: {total_investment}\nTotal Market Value: {total_market_value}\nTotal Gain or Deficit: {total_gain_deficit}\n"
 
     @staticmethod
     def build_from_file(filepath: str) -> 'Portfolio':
