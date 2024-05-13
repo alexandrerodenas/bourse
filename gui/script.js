@@ -12,12 +12,13 @@ import { populateAdditionalInfo } from './additionalInfo.js';
 import { drawPortfoliosEvolution } from './charts/investment-versus-market.chart.js';
 import { drawGainLossChart } from './charts/gain-loss.chart.js';
 import { drawStockValuesChart } from './charts/stock-values-history.chart.js';
-
+import { addChangeIndicator } from './portfolios.js';
 
 
 document.addEventListener('DOMContentLoaded', function () {
     fetchPortfolios()
         .then(portfolios => {
+            portfolios = addChangeIndicator(portfolios)
             portfolios.forEach(portfolio => {
                 createTab(portfolio)
                 createDataTable(portfolio)

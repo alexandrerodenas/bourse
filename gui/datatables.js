@@ -1,4 +1,4 @@
-import {RED_COLOR} from "./colors.js";
+import { GREEN_COLOR, RED_COLOR } from './colors.js';
 
 const TABLE_OPTIONS = [
   { data: 'name', title: 'Nom' },
@@ -84,9 +84,21 @@ function createRow(row, data) {
 
   const nomCell = row.getElementsByTagName('td')[0];
   nomCell.innerHTML = capitalizeString(nomCell.innerHTML);
+
+  getCurrentPriceCell(row).innerHTML += getCaretIcon(data.change);
 }
 
 function capitalizeString(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+function getCaretIcon(change) {
+  console.log(change)
+  if (change === 'increased') {
+    return ' <i style=\'color: ' + GREEN_COLOR + '\' class=\'fas fa-caret-up\'>';
+  } else if (change === 'decreased') {
+    return ' <i style=\'color: ' + RED_COLOR + '\' class=\'fas fa-caret-down\'>';
+  } else {
+    return "";
+  }
+}
