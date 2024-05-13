@@ -1,6 +1,4 @@
-from typing import List
 from core.stock_metadata import StockMetadata
-from core.yfinance_utils import get_current_price
 
 
 class Stock:
@@ -44,10 +42,3 @@ class Stock:
             'difference_value_euros': self.difference_value_euros,
             'difference_value_percentage': self.difference_value_percentage
         }
-
-    @staticmethod
-    def build_stock_with_up_to_date_price(stock_metadata: List[StockMetadata]) -> List['Stock']:
-        return [
-            Stock(metadata, get_current_price(metadata.symbol))
-            for metadata in stock_metadata
-        ]

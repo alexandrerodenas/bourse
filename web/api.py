@@ -22,6 +22,6 @@ def get_portfolio_history():
 
 if __name__ == '__main__':
     app.config['CORS_HEADERS'] = 'Content-Type'
-    logging.basicConfig(level="INFO", format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
-    history = History.build_from_file(os.getenv("STOCK_FILE"))
+    logging.basicConfig(level="DEBUG", format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+    history = History.build_from_file(os.getenv("STOCK_FILE", "../stocks.yml"))
     app.run(host='0.0.0.0', port=8000)

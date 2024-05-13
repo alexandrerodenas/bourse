@@ -23,13 +23,20 @@ export function drawPortfoliosEvolution(portfolios) {
         name: grpName,
         title: toTitleCase(grpName),
         values: portfolios.map(p =>
-           ({ time: new Date(p.portfolio_date), value: +p[grpName], gain_deficit: p.total_gain_deficit })
+          ({
+            time: new Date(p.portfolio_date),
+            value: +p[grpName],
+            gain_deficit: p.total_gain_deficit,
+          }),
         ),
       };
     });
 
+  const uniqueDates = Array.from(
+    new Set(portfolios.map(p => p.portfolio_date)));
+
   const xScale = d3.scaleUtc().
-    domain(d3.extent(portfolios, d => d.portfolio_date)).
+    domain(d3.extent(uniqueDates, d => new Date(d))).
     range([0, width]);
 
   const yScale = d3.scaleLinear().domain([
@@ -64,8 +71,8 @@ export function drawPortfoliosEvolution(portfolios) {
     attr('cy', function (d) { return yScale(d.value); }).
     attr('r', 5).
     attr('stroke', 'white').
-    on("mouseover", handleMouseOver).
-    on("mouseout", handleMouseOut);
+    on('mouseover', handleMouseOver).
+    on('mouseout', handleMouseOut);
 
   svg.selectAll('.legend').
     data(dataReady).
@@ -87,7 +94,6 @@ export function drawPortfoliosEvolution(portfolios) {
 
   function handleMouseOver(portfolio) {
     tooltip.style('display', 'block');
-    console.log(portfolio)
     tooltip.select('text').text(`Gain/Loss: ${portfolio.gain_deficit}`);
   }
 
@@ -114,9 +120,8 @@ export function drawPortfoliosEvolution(portfolios) {
 
   svg.append('g').
     attr('transform', `translate(0,${height})`).
-    call(d3.axisBottom(xScale));
+    call(d3.axisBottom(xScale).ticks(uniqueDates.length));
 
-  // Draw y axis
   svg.append('g').call(d3.axisLeft(yScale));
 
   svg.append('text').
@@ -124,7 +129,6 @@ export function drawPortfoliosEvolution(portfolios) {
     style('text-anchor', 'middle').
     text('Date');
 
-  // Add y axis label
   svg.append('text').
     attr('transform', 'rotate(-90)').
     attr('y', 0 - margin.left).
@@ -140,5 +144,5 @@ function toTitleCase(str) {
     function (txt) {
       return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     },
-  ).replace(/_/g, " ");
+  ).replace(/_/g, ' ');
 }

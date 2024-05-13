@@ -30,11 +30,3 @@ class Portfolio:
             'id': self.id,
             'stocks': [stock.transform_to_dict() for stock in self.stocks]
         }
-
-    @staticmethod
-    def build_from_file(filepath: str) -> 'Portfolio':
-        return Portfolio(
-            Stock.build_stock_with_up_to_date_price(
-                StockMetadata.load_from_file(filepath)
-            )
-        )

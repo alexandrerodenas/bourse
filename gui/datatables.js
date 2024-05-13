@@ -3,7 +3,7 @@ const TABLE_OPTIONS = [
   { data: 'name', title: 'Nom' },
   { data: 'number', title: 'Nombre' },
   { data: 'cost', title: 'Prix achat' },
-  { data: 'current_price', title: 'Prix clotûre' },
+  { data: 'stock_value_estimation', title: 'Prix clotûre' },
   { data: 'difference_value_euros', title: 'Gain/Perte (€)' },
   { data: 'difference_value_percentage', title: 'Gain/Perte (%)'}
 ];
@@ -62,7 +62,7 @@ function createRow(row, data) {
   const gainLossCell = row.getElementsByTagName('td')[4];
   const gainLoss = parseFloat(gainLossCell.innerHTML);
   if (gainLoss < 0) {
-    row.style.backgroundColor = RED_COLOR;
+    row.querySelectorAll('*').forEach(child => child.style.color = RED_COLOR)
   }
 
   const nomCell = row.getElementsByTagName('td')[0];
