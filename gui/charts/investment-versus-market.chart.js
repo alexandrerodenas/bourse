@@ -1,6 +1,6 @@
-export function drawPortfoliosEvolution(portfolios) {
-  portfolios.forEach(portfolio => {
-    portfolio.portfolio_date = new Date(portfolio.portfolio_date);
+export function drawPortfoliosEvolution(history) {
+  history.forEach(history => {
+    history.portfolio_date = new Date(history.portfolio_date);
   });
 
   const margin = { top: 20, right: 30, bottom: 60, left: 60 };
@@ -22,9 +22,9 @@ export function drawPortfoliosEvolution(portfolios) {
       return {
         name: grpName,
         title: toTitleCase(grpName),
-        values: portfolios.map(p =>
+        values: history.map(p =>
           ({
-            time: new Date(p.portfolio_date),
+            time: new Date(p.date),
             value: +p[grpName],
             gain_deficit: p.total_gain_deficit,
           }),
@@ -33,7 +33,7 @@ export function drawPortfoliosEvolution(portfolios) {
     });
 
   const uniqueDates = Array.from(
-    new Set(portfolios.map(p => p.portfolio_date)));
+    new Set(history.map(p => p.date)));
 
   const xScale = d3.scaleUtc().
     domain(d3.extent(uniqueDates, d => new Date(d))).
@@ -41,7 +41,7 @@ export function drawPortfoliosEvolution(portfolios) {
 
   const yScale = d3.scaleLinear().domain([
     0,
-    d3.max(portfolios,
+    d3.max(history,
       d => Math.max(d.total_investment_amount, d.total_market_value)),
   ]).nice().range([height, 0]);
 
@@ -70,9 +70,7 @@ export function drawPortfoliosEvolution(portfolios) {
     attr('cx', function (d) { return xScale(d.time); }).
     attr('cy', function (d) { return yScale(d.value); }).
     attr('r', 5).
-    attr('stroke', 'white').
-    on('mouseover', handleMouseOver).
-    on('mouseout', handleMouseOut);
+    attr('stroke', 'white');
 
   svg.selectAll('.legend').
     data(dataReady).
@@ -91,32 +89,6 @@ export function drawPortfoliosEvolution(portfolios) {
         style('opacity', currentOpacity == 1 ? 0 : 1);
 
     });
-
-  function handleMouseOver(portfolio) {
-    tooltip.style('display', 'block');
-    tooltip.select('text').text(`Gain/Perte: ${portfolio.gain_deficit}`);
-  }
-
-  function handleMouseOut() {
-    tooltip.style('display', 'none');
-  }
-
-  const tooltip = svg.append('g').
-    attr('class', 'tooltip').
-    style('display', 'none');
-
-  tooltip.append('rect').
-    attr('width', 60).
-    attr('height', 20).
-    attr('fill', 'white').
-    style('opacity', 0.5);
-
-  tooltip.append('text').
-    attr('x', 500).
-    attr('dy', '1.2em').
-    style('text-anchor', 'middle').
-    attr('font-size', '12px').
-    attr('font-weight', 'bold');
 
   svg.append('g').
     attr('transform', `translate(0,${height})`).

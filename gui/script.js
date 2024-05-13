@@ -1,4 +1,8 @@
-import { fetchPortfolios } from './api.js';
+import {
+    fetchGainLossHistory,
+    fetchInvestmentHistory,
+    fetchPortfolios,
+} from './api.js';
 import {
     createDataTable,
 } from './datatables.js';
@@ -20,10 +24,18 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             activePortfolio(portfolios[portfolios.length - 1].id);
             attachTabClickListeners();
-            drawPortfoliosEvolution(portfolios);
-            drawGainLossChart(portfolios);
         })
         .catch(error => console.error('Error fetching data:', error));
+    fetchGainLossHistory()
+    .then(history => {
+        drawGainLossChart(history);
+    })
+    .catch(error => console.error('Error fetching data:', error));
+    fetchInvestmentHistory()
+    .then(history => {
+        drawPortfoliosEvolution(history);
+    })
+    .catch(error => console.error('Error fetching data:', error));
 });
 
 

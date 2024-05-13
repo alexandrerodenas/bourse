@@ -1,4 +1,4 @@
-export function drawGainLossChart(portfolios){
+export function drawGainLossChart(history){
   const margin = { top: 20, right: 30, bottom: 60, left: 60 };
   const width = 1000 - margin.left - margin.right;
   const height = 400 - margin.top - margin.bottom;
@@ -12,20 +12,20 @@ export function drawGainLossChart(portfolios){
   const data = ['gain_loss'].map(function (grpName) {
     return {
       name: grpName,
-      values: portfolios.map(p =>
-        ({ time: new Date(p.portfolio_date), value: p.total_gain_deficit })
+      values: history.map(p =>
+        ({ time: new Date(p.date), value: p.value })
       ),
     };
   });
 
-  const uniqueDates = Array.from(new Set(portfolios.map(p => p.portfolio_date)));
+  const uniqueDates = Array.from(new Set(history.map(p => p.date)));
 
   const xScale = d3.scaleUtc()
   .domain(d3.extent(uniqueDates, d => new Date(d)))
   .range([0, width]);
 
   const yScale = d3.scaleLinear()
-  .domain(d3.extent(portfolios, d => d.total_gain_deficit))
+  .domain(d3.extent(history, d => d.value))
   .nice()
   .range([height, 0]);
 
