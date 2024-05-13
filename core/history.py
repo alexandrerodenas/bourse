@@ -34,20 +34,26 @@ class History:
     def get_gain_loss_history(self):
         return [
             {
-                "value": portfolio.total_gain_or_deficit(),
-                "date": portfolio.date
+                "name": "gain_loss",
+                "data": [(portfolio.date.strftime('%Y-%m-%d'), round(portfolio.total_gain_or_deficit(), 2))
+                         for portfolio in self._portfolios]
             }
-            for portfolio in self._portfolios
         ]
 
     def get_investment_evolution(self):
         return [
             {
-                "total_market_value": portfolio.total_market_value(),
-                "total_investment_amount": portfolio.total_investment_amount(),
-                "date": portfolio.date
-            }
-            for portfolio in self._portfolios
+                "name": "total_market_value",
+                "data": [(portfolio.date.strftime('%Y-%m-%d'), round(portfolio.total_market_value(), 2))
+                         for portfolio in self._portfolios]
+            },
+            {
+                "name": "total_investment_amount",
+                "data": [
+                    (portfolio.date.strftime('%Y-%m-%d'), round(portfolio.total_investment_amount(), 2))
+                    for portfolio in self._portfolios
+                ]
+            },
         ]
 
     def get_stock_values(self, start_date: str):
@@ -59,8 +65,9 @@ class History:
             stock_symbol = column.split('.')[0]
             values = closes[column].reset_index().values.tolist()
             stock_values.append({
-                "name": [stock.name for stock in self._portfolios[-1].stocks if stock.symbol == f'{stock_symbol}.PA'][0],
-                "values": [[value[0].strftime('%Y-%m-%d'), value[1]] for value in values]
+                "name": [stock.name for stock in self._portfolios[-1].stocks if stock.symbol == f'{stock_symbol}.PA'][
+                    0],
+                "data": [[value[0].strftime('%Y-%m-%d'), value[1]] for value in values]
             })
 
         return stock_values
@@ -73,5 +80,3 @@ class History:
         return History(
             StockMetadata.load_from_file(filepath)
         )
-
-

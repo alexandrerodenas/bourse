@@ -1,26 +1,27 @@
 import { formatDate } from './date-utils.js';
 
-export function drawGainLossChart(series){
+export function drawStockValuesChart(series) {
   formatDate(series)
-  Highcharts.chart('gain-loss', {
+
+  Highcharts.chart('stock-values', {
     title: {
-      text: 'Gain/Perte',
+      text: 'Historique des actions'
     },
     xAxis: {
       type: 'datetime',
       title: {
-        text: 'Date',
-      },
+        text: 'Date'
+      }
     },
     yAxis: {
       title: {
-        text: 'Montant',
-      },
+        text: "Prix de l'action"
+      }
     },
     legend: {
-      layout: 'horizontal',
-      align: 'center',
-      verticalAlign: 'top',
+      layout: 'vertical',
+      align: 'right',
+      verticalAlign: 'middle'
     },
     series: series,
     responsive: {

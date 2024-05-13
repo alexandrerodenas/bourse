@@ -15,3 +15,8 @@ export function fetchInvestmentHistory() {
   return fetch(`${API_URL}/investment`)
   .then(response => response.json());
 }
+
+export function fetchStockValuesHistory() {
+  return fetch(`${API_URL}/stock-values?start_date=2024-05-06`)
+  .then(response => response.json());
+}
