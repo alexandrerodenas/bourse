@@ -7,6 +7,7 @@ class Stock:
         self.number = metadata.number
         self.date = metadata.date
         self.status = metadata.status
+        self.symbol = metadata.symbol
         self.cost = metadata.unit_cost * metadata.number
         self.current_price = current_price
         self.gain_or_deficit = self.calculate_gain_or_deficit()

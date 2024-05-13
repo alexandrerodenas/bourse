@@ -1,3 +1,5 @@
+import {RED_COLOR} from "./colors.js";
+
 const TABLE_OPTIONS = [
   { data: 'name', title: 'Nom' },
   { data: 'number', title: 'Nombre' },
@@ -12,7 +14,6 @@ const LENGTH_MENU_OPTIONS = [
   [5, 10, 25, 50, 'Tous'],
 ];
 const DEFAULT_PAGE_LENGTH = 10;
-const RED_COLOR = '#DC143C';
 
 export function createDataTable(portfolio) {
   const tabPane = createTabPane(portfolio.id);

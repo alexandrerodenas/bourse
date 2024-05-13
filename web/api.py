@@ -1,7 +1,8 @@
+import datetime
 import logging
 import os
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 from core.history import History
@@ -26,8 +27,17 @@ def get_gain_loss_history():
 
 
 @app.route('/history/investment', methods=['GET'])
-def gest_investment_history():
+def get_investment_history():
     return jsonify(history.get_investment_evolution())
+
+
+@app.route('/history/stock-values', methods=['GET'])
+def get_stock_values_history():
+    start_date_str = request.args.get('start_date')
+    if not start_date_str:
+        return jsonify({'error': 'Missing start_date parameter'}), 400
+
+    return jsonify(history.get_stock_values(start_date_str))
 
 
 if __name__ == '__main__':
