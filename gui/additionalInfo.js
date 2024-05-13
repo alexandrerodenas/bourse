@@ -1,5 +1,7 @@
 
 export function populateAdditionalInfo(portfolio) {
+  createInfoSeparator(portfolio.id);
+
   const infoContainer = document.createElement('div');
   infoContainer.classList.add('info-container');
   const totalGainDeficit = parseFloat(portfolio.total_gain_deficit).toFixed(2);
@@ -13,4 +15,11 @@ export function populateAdditionalInfo(portfolio) {
         <p><i class="fas fa-chart-line"></i> Total Gain/Perte: ${totalGainDeficit}</p>
     `;
   document.getElementById(portfolio.id).appendChild(infoContainer);
+}
+
+
+function createInfoSeparator(tabPaneId) {
+  const separator = document.createElement('hr');
+  separator.classList.add('info-separator');
+  document.getElementById(tabPaneId).appendChild(separator);
 }

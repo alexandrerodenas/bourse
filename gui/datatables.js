@@ -1,15 +1,15 @@
-
 const TABLE_OPTIONS = [
   { data: 'name', title: 'Nom' },
   { data: 'number', title: 'Nombre' },
   { data: 'cost', title: 'Prix achat' },
-  { data: 'stock_value_estimation', title: 'Prix clotûre' },
+  { data: 'stock_value_estimation', title: 'Estimation' },
+  { data: 'current_price', title: 'Prix clotûre' },
   { data: 'difference_value_euros', title: 'Gain/Perte (€)' },
-  { data: 'difference_value_percentage', title: 'Gain/Perte (%)'}
+  { data: 'difference_value_percentage', title: 'Gain/Perte (%)' },
 ];
 const LENGTH_MENU_OPTIONS = [
   [5, 10, 25, 50, -1],
-  [5, 10, 25, 50, "Tous"]
+  [5, 10, 25, 50, 'Tous'],
 ];
 const DEFAULT_PAGE_LENGTH = 10;
 const RED_COLOR = '#DC143C';
@@ -17,7 +17,6 @@ const RED_COLOR = '#DC143C';
 export function createDataTable(portfolio) {
   const tabPane = createTabPane(portfolio.id);
   populateDataTable(tabPane.id, portfolio.stocks);
-  createInfoSeparator(tabPane.id);
 }
 
 function createTabPane(portfolioId) {
@@ -36,7 +35,8 @@ function populateDataTable(tabPaneId, stocks) {
   document.getElementById(tabPaneId).appendChild(tableContainer);
 
   const table = document.createElement('table');
-  table.classList.add('table', 'is-bordered', 'is-striped', 'is-narrow', 'is-hoverable', 'is-fullwidth');
+  table.classList.add('table', 'is-bordered', 'is-striped', 'is-narrow',
+    'is-hoverable', 'is-fullwidth');
   table.id = `table-${tabPaneId.substr(3)}`;
   tableContainer.appendChild(table);
   new DataTable(table, {
@@ -54,27 +54,38 @@ function populateDataTable(tabPaneId, stocks) {
   tableContainer.style.overflowX = 'hidden';
 }
 
-function createRow(row, data) {
-  const currentPriceCell = row.getElementsByTagName('td')[3];
-  const currentPrice = parseFloat(currentPriceCell.innerHTML);
-  currentPriceCell.innerHTML = currentPrice.toFixed(2);
+function formatDigit(cell) {
+  const value = parseFloat(cell.innerHTML);
+  cell.innerHTML = value.toFixed(2);
+}
 
-  const gainLossCell = row.getElementsByTagName('td')[4];
+function getEstimationCell(row) {
+  return row.getElementsByTagName('td')[3];
+}
+
+function getCurrentPriceCell(row) {
+  return row.getElementsByTagName('td')[4];
+}
+
+function getGainLossCell(row) {
+  return row.getElementsByTagName('td')[5];
+}
+
+function createRow(row, data) {
+  formatDigit(getEstimationCell(row));
+  formatDigit(getCurrentPriceCell(row));
+
+  const gainLossCell = getGainLossCell(row);
   const gainLoss = parseFloat(gainLossCell.innerHTML);
   if (gainLoss < 0) {
-    row.querySelectorAll('*').forEach(child => child.style.color = RED_COLOR)
+    row.querySelectorAll('*').forEach(child => child.style.color = RED_COLOR);
   }
 
   const nomCell = row.getElementsByTagName('td')[0];
-  nomCell.innerHTML = capitalizeString(nomCell.innerHTML)
+  nomCell.innerHTML = capitalizeString(nomCell.innerHTML);
 }
 
 function capitalizeString(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-function createInfoSeparator(tabPaneId) {
-  const separator = document.createElement('hr');
-  separator.classList.add('info-separator');
-  document.getElementById(tabPaneId).appendChild(separator);
-}

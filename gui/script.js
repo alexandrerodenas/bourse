@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 createDataTable(portfolio)
                 populateAdditionalInfo(portfolio);
             });
-            activePortfolio(portfolios[0].id);
+            activePortfolio(portfolios[portfolios.length - 1].id);
             attachTabClickListeners();
             drawPortfoliosEvolution(portfolios);
             drawGainLossChart(portfolios);

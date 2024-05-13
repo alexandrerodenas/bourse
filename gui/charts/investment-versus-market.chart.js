@@ -94,7 +94,7 @@ export function drawPortfoliosEvolution(portfolios) {
 
   function handleMouseOver(portfolio) {
     tooltip.style('display', 'block');
-    tooltip.select('text').text(`Gain/Loss: ${portfolio.gain_deficit}`);
+    tooltip.select('text').text(`Gain/Perte: ${portfolio.gain_deficit}`);
   }
 
   function handleMouseOut() {
@@ -135,7 +135,7 @@ export function drawPortfoliosEvolution(portfolios) {
     attr('x', 0 - (height / 2)).
     attr('dy', '1em').
     style('text-anchor', 'middle').
-    text('Amount');
+    text('Montant');
 }
 
 function toTitleCase(str) {
