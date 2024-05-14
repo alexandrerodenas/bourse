@@ -23,7 +23,11 @@ def get_portfolio_history():
 
 @app.route('/history/gain-loss', methods=['GET'])
 def get_gain_loss_history():
-    return jsonify(history.get_gain_loss_history())
+    stock_name = request.args.get('stock_name')
+    if not stock_name:
+        return jsonify(history.get_gain_loss_history())
+    return jsonify(history.get_gain_loss_history_per_stock(stock_name))
+
 
 
 @app.route('/history/investment', methods=['GET'])

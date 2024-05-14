@@ -12,6 +12,9 @@ class Portfolio:
         self.date = portfolio_date
         self.id = uuid4()
 
+    def get_stock_by_name(self, stock_name):
+        return next((stock for stock in self.stocks if stock.name.lower() == stock_name.lower()), None)
+
     def total_investment_amount(self):
         return sum(stock.investment for stock in self.stocks)
 

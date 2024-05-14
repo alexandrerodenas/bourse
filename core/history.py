@@ -34,9 +34,23 @@ class History:
     def get_gain_loss_history(self):
         return [
             {
-                "name": "gain_loss",
+                "name": "gain loss",
                 "data": [(portfolio.date.strftime('%Y-%m-%d'), round(portfolio.total_gain_or_deficit(), 2))
                          for portfolio in self._portfolios]
+            }
+        ]
+
+    def get_gain_loss_history_per_stock(self, stock_name):
+        return [
+            {
+                "name": f"gain loss for " + stock_name,
+                "data": [
+                    (
+                        portfolio.date.strftime('%Y-%m-%d'),
+                        self._get_stock_gain_or_deficit(portfolio, stock_name)
+                    )
+                    for portfolio in self._portfolios
+                ]
             }
         ]
 
@@ -80,3 +94,10 @@ class History:
         return History(
             StockMetadata.load_from_file(filepath)
         )
+
+    @staticmethod
+    def _get_stock_gain_or_deficit(portfolio, stock_name):
+        stock = portfolio.get_stock_by_name(stock_name)
+        if stock:
+            return round(stock.gain_or_deficit, 2)
+        return 0
