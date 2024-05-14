@@ -13,7 +13,7 @@ class Portfolio:
         self.id = uuid4()
 
     def total_investment_amount(self):
-        return sum(stock.cost for stock in self.stocks)
+        return sum(stock.investment for stock in self.stocks)
 
     def total_market_value(self):
         return sum(stock.current_price * stock.number for stock in self.stocks)

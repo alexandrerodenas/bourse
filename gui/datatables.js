@@ -3,9 +3,10 @@ import { GREEN_COLOR, RED_COLOR } from './colors.js';
 const TABLE_OPTIONS = [
   { data: 'name', title: 'Nom' },
   { data: 'number', title: 'Nombre' },
-  { data: 'cost', title: 'Prix achat' },
-  { data: 'stock_value_estimation', title: 'Estimation' },
-  { data: 'current_price', title: 'Prix clotûre' },
+  { data: 'unit_cost', title: 'Prix achat (€)' },
+  { data: 'current_price', title: 'Prix clotûre (€)' },
+  { data: 'stock_value_investment', title: 'Investissement total (€)' },
+  { data: 'stock_value_estimation', title: 'Valorisation (€)' },
   { data: 'difference_value_euros', title: 'Gain/Perte (€)' },
   { data: 'difference_value_percentage', title: 'Gain/Perte (%)' },
 ];
@@ -60,32 +61,27 @@ function formatDigit(cell) {
   cell.innerHTML = value.toFixed(2);
 }
 
-function getEstimationCell(row) {
-  return row.getElementsByTagName('td')[3];
-}
-
-function getCurrentPriceCell(row) {
-  return row.getElementsByTagName('td')[4];
-}
-
-function getGainLossCell(row) {
-  return row.getElementsByTagName('td')[5];
+function getCell(row, columnName) {
+  const index = TABLE_OPTIONS.findIndex(
+    option => option.data === columnName
+  );
+  return row.getElementsByTagName('td')[index];
 }
 
 function createRow(row, data) {
-  formatDigit(getEstimationCell(row));
-  formatDigit(getCurrentPriceCell(row));
+  formatDigit(getCell(row, "current_price"));
+  formatDigit(getCell(row, "stock_value_estimation"));
 
-  const gainLossCell = getGainLossCell(row);
+  const gainLossCell = getCell(row, "difference_value_euros");
   const gainLoss = parseFloat(gainLossCell.innerHTML);
   if (gainLoss < 0) {
     row.querySelectorAll('*').forEach(child => child.style.color = RED_COLOR);
   }
 
-  const nomCell = row.getElementsByTagName('td')[0];
+  const nomCell = getCell(row, "name");
   nomCell.innerHTML = capitalizeString(nomCell.innerHTML);
 
-  getCurrentPriceCell(row).innerHTML += getCaretIcon(data.change);
+  getCell(row, "current_price").innerHTML += getCaretIcon(data.change);
 }
 
 function capitalizeString(str) {
@@ -93,7 +89,6 @@ function capitalizeString(str) {
 }
 
 function getCaretIcon(change) {
-  console.log(change)
   if (change === 'increased') {
     return ' <i style=\'color: ' + GREEN_COLOR + '\' class=\'fas fa-caret-up\'>';
   } else if (change === 'decreased') {
