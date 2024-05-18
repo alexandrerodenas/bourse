@@ -1,3 +1,4 @@
+import datetime
 import logging
 from typing import List
 
@@ -14,7 +15,14 @@ def download_history(symbols: List[str], start_date: str):
 
 def get_last_dividend(symbol: str):
     calendar = yf.Ticker(symbol).calendar
+    date = calendar['Ex-Dividend Date']
+    dividend = calendar['Earnings Average']
+    if date < datetime.date.today():
+        dividend = yf.Ticker(symbol).dividends.iloc[-1]
     try:
-        return calendar['Ex-Dividend Date'], calendar['Earnings Average']
+        return {
+            "date": date,
+            "amount": dividend
+        }
     except KeyError as e:
         logging.error(e)

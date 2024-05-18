@@ -76,13 +76,13 @@ class PortfolioWebService:
         return jsonify(stock_values)
 
     def get_dividend_calendar(self):
-        return jsonify([
+        return [
             {
-                "dividend": get_last_dividend(metadata.symbol),
-                "name" : metadata.name
+                "name": metadata.name,
+                **get_last_dividend(metadata.symbol)
             }
             for metadata in self._stock_metadata
-        ])
+        ]
 
     @staticmethod
     def _get_stock_gain_or_deficit(portfolio, stock_name):
