@@ -1,47 +1,37 @@
-import datetime
-from typing import List
-
-import pandas as pd
-from pandas import Series
+from flask import jsonify
 
 from core.portfolio import Portfolio
-from core.stock import Stock
+from core.portfolio_factory import PortfolioFactory
 from core.stock_metadata import StockMetadata
-from core.yfinance_utils import get_close_history, download_history
+from core.yfinance_utils import download_history, get_last_dividend
 
 
-class History:
-    def __init__(self, stocks_metadata: List[StockMetadata]):
-        stocks_history: Series = pd.DataFrame([
-            {
-                "stock": Stock(stock_metadata, close_value),
-                "history_date": close_date.date()
-            }
-            for stock_metadata in stocks_metadata
-            for close_date, close_value in get_close_history(stock_metadata.symbol, stock_metadata.date).items()
-        ]).groupby("history_date")['stock'].apply(list)
-        self._portfolios = [
-            Portfolio(stocks, date)
-            for date, stocks in stocks_history.items()
-        ]
+class PortfolioWebService:
 
-    def transform_to_dict(self):
-        return [
+    def __init__(self, stock_metadata: [StockMetadata]):
+        self._stock_metadata = stock_metadata
+        self._portfolios = PortfolioFactory.build_portfolio_history(stock_metadata)
+
+    def get_current_portfolio(self):
+        return jsonify(self._portfolios[-1].transform_to_dict())
+
+    def get_portfolios(self):
+        return jsonify([
             portfolio.transform_to_dict()
             for portfolio in self._portfolios
-        ]
+        ])
 
     def get_gain_loss_history(self):
-        return [
+        return jsonify([
             {
                 "name": "gain loss",
                 "data": [(portfolio.date.strftime('%Y-%m-%d'), round(portfolio.total_gain_or_deficit(), 2))
                          for portfolio in self._portfolios]
             }
-        ]
+        ])
 
     def get_gain_loss_history_per_stock(self, stock_name):
-        return [
+        return jsonify([
             {
                 "name": f"gain loss for " + stock_name,
                 "data": [
@@ -52,10 +42,10 @@ class History:
                     for portfolio in self._portfolios
                 ]
             }
-        ]
+        ])
 
     def get_investment_evolution(self):
-        return [
+        return jsonify([
             {
                 "name": "total_market_value",
                 "data": [(portfolio.date.strftime('%Y-%m-%d'), round(portfolio.total_market_value(), 2))
@@ -68,7 +58,7 @@ class History:
                     for portfolio in self._portfolios
                 ]
             },
-        ]
+        ])
 
     def get_stock_values(self, start_date: str):
         stock_values = []
@@ -83,17 +73,16 @@ class History:
                     0],
                 "data": [[value[0].strftime('%Y-%m-%d'), value[1]] for value in values]
             })
+        return jsonify(stock_values)
 
-        return stock_values
-
-    def get_current_portfolio(self):
-        return self._portfolios[-1]
-
-    @classmethod
-    def build_from_file(cls, filepath: str) -> 'History':
-        return History(
-            StockMetadata.load_from_file(filepath)
-        )
+    def get_dividend_calendar(self):
+        return jsonify([
+            {
+                "dividend": get_last_dividend(metadata.symbol),
+                "name" : metadata.name
+            }
+            for metadata in self._stock_metadata
+        ])
 
     @staticmethod
     def _get_stock_gain_or_deficit(portfolio, stock_name):
