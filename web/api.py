@@ -46,8 +46,9 @@ def get_stock_values_history():
 
 
 @app.route('/portfolio/dividend', methods=['GET'])
-def get_dividend_calendar():
-    return portfolios_service.get_dividend_calendar()
+def get_dividends():
+    return portfolios_service.get_dividends()
+
 
 if __name__ == '__main__':
     app.config['CORS_HEADERS'] = 'Content-Type'

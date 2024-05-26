@@ -1,3 +1,4 @@
+import datetime
 import logging
 from dataclasses import dataclass
 from typing import List
@@ -11,7 +12,7 @@ class StockMetadata:
         self.name = name
         self.symbol = symbol
         self.number = number
-        self.date = date
+        self.date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
         self.status = status
         self.unit_cost = unit_cost
 

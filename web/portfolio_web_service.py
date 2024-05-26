@@ -1,5 +1,6 @@
 from flask import jsonify
 
+from core.dividend import Dividend
 from core.portfolio import Portfolio
 from core.portfolio_factory import PortfolioFactory
 from core.stock_metadata import StockMetadata
@@ -11,6 +12,14 @@ class PortfolioWebService:
     def __init__(self, stock_metadata: [StockMetadata]):
         self._stock_metadata = stock_metadata
         self._portfolios = PortfolioFactory.build_portfolio_history(stock_metadata)
+        self._dividends = [
+            Dividend(
+                name=metadata.name,
+                stock_metadata=metadata,
+                **get_last_dividend(metadata.symbol)
+            )
+            for metadata in self._stock_metadata
+        ]
 
     def get_current_portfolio(self):
         return jsonify(self._portfolios[-1].transform_to_dict())
@@ -75,14 +84,12 @@ class PortfolioWebService:
             })
         return jsonify(stock_values)
 
-    def get_dividend_calendar(self):
+    def get_dividends(self):
         return [
-            {
-                "name": metadata.name,
-                **get_last_dividend(metadata.symbol)
-            }
-            for metadata in self._stock_metadata
+            dividend.transform_as_dict()
+            for dividend in self._dividends
         ]
+
 
     @staticmethod
     def _get_stock_gain_or_deficit(portfolio, stock_name):
@@ -90,3 +97,5 @@ class PortfolioWebService:
         if stock:
             return round(stock.gain_or_deficit, 2)
         return 0
+
+

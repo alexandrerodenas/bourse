@@ -21,7 +21,7 @@ def get_last_dividend(symbol: str):
         dividend = yf.Ticker(symbol).dividends.iloc[-1]
     try:
         return {
-            "date": date,
+            "detachment_date": date,
             "amount": dividend
         }
     except KeyError as e:
